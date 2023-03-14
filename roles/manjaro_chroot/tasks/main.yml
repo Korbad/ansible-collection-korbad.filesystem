@@ -1,0 +1,12 @@
+---
+- name: Create directory to mount in
+  file:
+    state: directory
+    path: "{{ manjaro_partition_path }}"
+
+- name: Mount partition
+  mount:
+    path: "{{ manjaro_partition_path }}"
+    src: /dev/sda99
+    fstype: ext4
+    state: mounted

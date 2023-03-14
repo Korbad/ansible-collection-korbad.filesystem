@@ -1,0 +1,4 @@
+---
+- name: Write ISO to USB
+  command:
+    cmd: sudo dd bs=4M if={{ manjaro_iso_file_path }} of={{ usb_device_path }} status=progress oflag=sync

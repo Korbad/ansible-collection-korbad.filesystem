@@ -1,0 +1,34 @@
+- name: Unmount and delete partitions
+  hosts: redbeard
+  become: true
+  gather_facts: true
+  roles:
+  - name: disk_partition_and_boot
+    vars:
+      device_label: b
+  vars:
+    wwn: "{{ manjaro_drive.wwn | mandatory }}"
+    install_drive: 
+  tasks:
+  - name: Wipe install drive and all its partitions
+    command: find /dev -wholename "{{ install_drive }}*" -exec wipefs --force --all {} \;
+    check_mode: false
+    
+  - name: Create boot partition
+    parted:
+      device: '{{ install_drive }}'
+      label: gpt
+      number: 1
+      part_end: 512MB
+      name: boot
+      flags: [boot, esp]
+      state: present
+  - name: Create root partition
+    parted:
+      device: '{{ install_drive }}'
+      label: gpt
+      number: 2
+      part_start: 512MB
+      name: root
+      flags: [lvm]
+      state: present
